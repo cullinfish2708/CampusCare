@@ -1,5 +1,8 @@
 # Java
 **/target/
+**/data/
+*.mv.db
+*.trace.db
 *.class
 *.log
 
