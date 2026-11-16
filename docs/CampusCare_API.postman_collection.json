@@ -1,0 +1,174 @@
+{
+  "info": {
+    "name": "CampusCare API",
+    "_postman_id": "campuscare-api-local",
+    "description": "Local API collection for CampusCare Task 4. Set baseUrl to http://localhost:8080.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "ticketId",
+      "value": "1"
+    },
+    {
+      "key": "commentId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/health"
+      }
+    },
+    {
+      "name": "Dashboard summary",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/dashboard/summary"
+      }
+    },
+    {
+      "name": "List tickets",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/tickets?q=wifi&status=OPEN",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "tickets"
+          ],
+          "query": [
+            {
+              "key": "q",
+              "value": "wifi"
+            },
+            {
+              "key": "status",
+              "value": "OPEN"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Create ticket",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Wi-Fi unavailable in Lab 3\",\n  \"description\": \"The Wi-Fi connection disconnects repeatedly during class. This started this morning.\",\n  \"category\": \"IT_SUPPORT\",\n  \"priority\": \"HIGH\",\n  \"location\": \"CSE Block, Lab 3\",\n  \"requesterName\": \"Demo Student\",\n  \"requesterEmail\": \"student@example.test\"\n}"
+        },
+        "url": "{{baseUrl}}/api/tickets"
+      }
+    },
+    {
+      "name": "Ticket details",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/tickets/{{ticketId}}"
+      }
+    },
+    {
+      "name": "Update ticket",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"IN_PROGRESS\",\n  \"priority\": \"HIGH\",\n  \"assignedTeam\": \"IT Support Desk\"\n}"
+        },
+        "url": "{{baseUrl}}/api/tickets/{{ticketId}}"
+      }
+    },
+    {
+      "name": "Add comment",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"authorName\": \"Helpdesk Team\",\n  \"content\": \"A technician has been assigned to inspect the request.\"\n}"
+        },
+        "url": "{{baseUrl}}/api/tickets/{{ticketId}}/comments"
+      }
+    },
+    {
+      "name": "Edit comment",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"content\": \"Technician will inspect this request after 2 PM.\"\n}"
+        },
+        "url": "{{baseUrl}}/api/comments/{{commentId}}"
+      }
+    },
+    {
+      "name": "Delete comment",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/comments/{{commentId}}"
+      }
+    },
+    {
+      "name": "Delete ticket",
+      "request": {
+        "method": "DELETE",
+        "url": "{{baseUrl}}/api/tickets/{{ticketId}}"
+      }
+    },
+    {
+      "name": "JDBC category summary",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/reports/category-summary"
+      }
+    },
+    {
+      "name": "JDBC ticket/comment join",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/reports/tickets/{{ticketId}}"
+      }
+    },
+    {
+      "name": "Notification events (through main API)",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/notifications"
+      }
+    }
+  ]
+}

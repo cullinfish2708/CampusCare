@@ -1,0 +1,60 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-campuscare}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-campuscare-local-only}
+      POSTGRES_DB: ${POSTGRES_DB:-campuscare_db}
+    volumes:
+      - campuscare-db:/var/lib/postgresql/data
+      - ./infra/postgres/01-create-notification-db.sql:/docker-entrypoint-initdb.d/01-create-notification-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-campuscare} -d ${POSTGRES_DB:-campuscare_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  notification-service:
+    build: ./notification-service
+    environment:
+      SERVER_PORT: 8081
+      DB_URL: ${NOTIFICATION_DB_URL:-jdbc:postgresql://db:5432/campuscare_notifications}
+      DB_USERNAME: ${NOTIFICATION_DB_USERNAME:-campuscare}
+      DB_PASSWORD: ${NOTIFICATION_DB_PASSWORD:-campuscare-local-only}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8081/health >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 4s
+      retries: 10
+
+  backend:
+    build: ./backend
+    environment:
+      SERVER_PORT: 8080
+      DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-campuscare_db}
+      DB_USERNAME: ${DB_USERNAME:-campuscare}
+      DB_PASSWORD: ${DB_PASSWORD:-campuscare-local-only}
+      NOTIFICATION_SERVICE_URL: http://notification-service:8081
+      FRONTEND_ORIGIN: http://localhost:8088
+    depends_on:
+      db:
+        condition: service_healthy
+      notification-service:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE: /api
+    ports:
+      - "8088:80"
+    depends_on:
+      - backend
+      - notification-service
+
+volumes:
+  campuscare-db:
