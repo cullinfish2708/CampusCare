@@ -1,6 +1,15 @@
 {
   "version": 2,
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/dist",
   "rewrites": [
+    { "source": "/api/health", "destination": "/api/health.js" },
+    { "source": "/api/dashboard/summary", "destination": "/api/dashboard/summary.js" },
+    { "source": "/api/tickets", "destination": "/api/tickets.js" },
+    { "source": "/api/tickets/:id", "destination": "/api/tickets/[id].js" },
+    { "source": "/api/tickets/:id/comments", "destination": "/api/tickets/[id].js" },
+    { "source": "/notifications/api/notifications", "destination": "/api/notifications.js" },
+    { "source": "/api/notifications", "destination": "/api/notifications.js" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
